@@ -29,15 +29,16 @@ const int inf= 2e18;
 int SUM;
 vector<int> v;
 
+vector<int> ANS;
 vector<int> pow10(19);
 
-int dp[19][2][180];
+int dp[20][2][180];
 
 
 int mini(int i, int tight, int sum){
     //returns sum of digit if we are at i, we are tight, and sum of digits so far is sum
 
-    if(i==19){
+    if(i==18){
         if(sum<=SUM)return 0;
         else return inf;
     }
@@ -48,12 +49,17 @@ int mini(int i, int tight, int sum){
    int lb=tight? v[i]:0;
    int ub=9;
    int res=2e18;
+   int best=-1;
 
    for(int dig=lb; dig<=ub; dig++){
-     int diff= (dig-v[i])*(pow10[18-i]);
+     int diff= (dig-v[i])*(pow10[17-i]);
      int ntight=tight&&(dig==lb);
 
-     res=min(res,diff+ mini(i+1, ntight, sum+dig));
+     if(diff+ mini(i+1, ntight, sum+dig) < res){
+      res = diff+ mini(i+1, ntight, sum+dig);
+      best=dig;
+     }
+  
    }
 
    return dp[i][tight][sum] = res;
@@ -65,7 +71,7 @@ void solve(){
    cin>>SUM;
 
    v.clear();
-   for(int i=0; i<=18; i++){
+   for(int i=0; i<18; i++){
      int rem=n%10;
      v.push_back(rem);
      n/=10;
@@ -75,11 +81,12 @@ void solve(){
    memset(dp, -1, sizeof(dp));
    reverse(v.begin(), v.end());
 
+   for(auto x: v) cout<<x<<" ";
+   cout<<"\n";
+
   
    int ans= mini(0,1,0);
    cout<<ans<<endl;
-
-
 
 
 }
