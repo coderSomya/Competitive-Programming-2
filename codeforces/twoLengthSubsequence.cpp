@@ -1,105 +1,117 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define loop(i,l,r)     for(int i=l; i<r; i++)
+#define int             long long
+#define pb              push_back
+#define vi              vector<int>
+#define mkp             make_pair<int,int>
+#define umpii           unordered_map<int,int>
+#define maxheap         priority_queue<int>
+#define minheap         priority_queue<int, vi,greater<int>>
+#define setbits(x)      __builtin_popcountll(x)
+#define zerobits(x)     __builtin_ctzll(x)
+#define in_arr(A,n)     loop(i,0,n) cin>>A[i];
+#define p_arr(A,n)      loop(i,0,n) cout<<A[i]
+;
+#define pln_arr(A,n)    loop(i,0,n) cout<<A[i]<<endl
+#define take_n          int n; cin>>n;
+#define take_arr        int arr[n]; loop(i,0,n) cin>>arr[i];
+  
+  
+const int mod= 1e9+7;
+const int inf= 1e15;
 
-vector<int> s;
-vector<int> t;
-int n,k;
+int n,k; 
+string s,t;
 
-int dp[202][28][200];
+const int N =202;
 
-int maxi(int i, int last, int k){
+int dp[N][N][N];
 
-    int res=maxi(i+1, s[i], k);
-
-    if(dp[i][last][k]!=-1) return dp[i][last][k];
-
-    if(i==n) return 0;
-    //s[i] is t[0]
+int maxi(int i, int t0, int k){
+   
+    if(i>=n) return 0;
+    if(dp[i][t0][k]!=-1) {
+        return dp[i][t0][k];}
+    
+    int p=0;
+    if(s[i]==t[0]) p++;
+    
+    int res= maxi(i+1, t0+p, k);
+ 
     if(s[i]==t[0]){
-        //keep it
-        int get= (last==t[0]) && (s[i]==t[1]);
+       //we can change it to t[1]
 
-        res=max(res, get+ maxi(i+1,s[i], k));
-        //change it to t[1]
-        if(k!=0){
-           int get2= (last==t[0]);
-           res=max(res, get2+ maxi(i+1,t[1], k-1));
-        }
+       if(k>0 && t0>0){
+         res=max(res, t0+maxi(i+1, t0, k-1));
+       }
     }
-
     else if(s[i]==t[1]){
-        //keep it
-
-        int get= last==t[0];
-
-        res= max(res, get+ maxi(i+1,s[i], k));
-
-        //change it to t[0]
-
-        if(k!=0){
-            int get2= (last==t[0]) && t[0]==t[1];
-
-            res= max(res, get2+ maxi(i+1, t[0], k-1));
-        }
-    }
-
-    else {
-        if(k!=0){
-             //change it to t[0]
-
-             int get3= (last==t[0]) && (t[1]==t[0]);
-            res= max(res, get3+ maxi(i+1, t[0], k-1));
-
-
-            //change it to t[1]
-
-            int get4 = (last==t[0]) ;
-
-            res= max(res, get4+ maxi(i+1, t[1], k-1));
-        }
-
-
-        return dp[i][last][k] = res;
-
+        //we acn match one prev t0
+          if(t0>0) res= max(res, t0+ maxi(i+1,t0,k ));
         
+        //we can change it to t0
+          if(k>0){
+            res=max(res, maxi(i+1, t0+1, k-1));
+          }
     }
+
+    else{
+        if(k>0){
+         //we can change it to t0
+         res=max(res, maxi(i+1, t0+1, k-1));
+        //we can change it to t1
+        //we would do it only if there is a previous t0
+        if(t0>0){
+            res= max(res, t0+ maxi(i+1, t0, k-1));
+        }
+        
+        }
+    }
+
+    return dp[i][t0][k]=res;
+}
+
+int nc2(int i){
+    return i*(i-1)/2;
+}
+
+int solve2(){
+    int ct=0;
+    for(int i=0; i<n; i++){
+        ct+= (s[i]==t[0]);
+    }
+
+    ct+=min(n-ct, k);
+
+    int res=nc2(ct);
+    return res;
+}
+ 
+ 
+void solve(){
+    scanf("%d%d", &n,&k);
+   cin>>s>>t;
    
 
+   memset(dp, -1, sizeof(dp));
+
+   if(t[0]==t[1]){
+    int res= solve2();
+    cout<<res<<endl;
+    return;
+   }
+
+   int ans= maxi(0, 0, k);
+   cout<<ans<<"\n";
+   
 }
-
-void solve(){
-    scanf("%d%d", &n, &k);
-
-
-    string ss, tt;
-    scanf("%s", &ss);
-    scanf("%s", &tt);
-
-    s.clear();
-    t.clear();
-
-    for(int i=0; i<n; i++){
-        s.push_back(ss[i]-'a');
-    }
-
-    for(int i=0; i<2; i++){
-        t.push_back(tt[i]-'a');
-    }
-
-    memset(dp, -1, sizeof(dp));
-
-    int ans= maxi(0, 27, k);
-    cout<<ans<<"\n";
-
-
-}
-
-int main(){
-    int t;
-    t=1;
-    while(t-->0){
-        solve();
-    }
-
-    return 0;
+  
+  
+int32_t main(){
+// int t;
+// cin>>t;
+// while(t--)
+ solve();
+return 0;
 }
