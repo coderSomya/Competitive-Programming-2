@@ -44,7 +44,7 @@ void solve(){
     vector<pair<int,int>> smalls;
     vector<pair<int,int>> bigs;
 
-    cout<<idx<<endl;
+    // cout<<idx<<endl;
 
     for(int i=0; i<n; i++){
         if((i-idx)%2) smalls.pb({arr[i], i});
@@ -53,9 +53,6 @@ void solve(){
 
     sort(smalls.begin(), smalls.end());
     sort(bigs.begin(), bigs.end());
-
-   
-
 
     vector<int> ans(n);
 
