@@ -27,6 +27,45 @@ const int mod= 1e9+7;
 const int inf= 1e15;
 
 
+void solve2(){
+    
+    int n; cin>>n;
+    vi v(n);
+
+    loop(i,0,n) cin>>v[i];
+
+    vi uniq;
+    loop(i,0,n) uniq.pb(v[i]+i+1);
+
+    sort(uniq.rbegin(), uniq.rend());
+
+    vi ans;
+
+    unordered_map<int,int> seen;
+    unordered_map<int,int> put;
+
+    for(int i=0; i<n; i++){
+        int a = uniq[i];
+
+        // it must have changed so far, lets see how much
+        int x = (seen.find(a) == seen.end()) ? 0 : seen[a];
+        int b = a - x;
+
+        int y = (put.find(b) == put.end()) ? 0 : put[b];
+
+        //so seen should always store the exact count
+        seen[a]++;
+        ans.pb(b-y);
+
+        //put should store the modified count
+        put[b-y]++;
+    }    
+
+
+    loop(i,0,n) cout<<ans[i]<<" ";
+    cout<<endl;
+}
+
  
 void solve(){
 
@@ -61,7 +100,7 @@ void solve(){
 int32_t main(){
 int t;
 cin>>t;
-while(t--) solve();
+while(t--) solve2();
 return 0;
 }
 
