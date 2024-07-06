@@ -41,87 +41,93 @@ void solve(){
     }
 
     map<int,int> mp;
+    map<int,int> pos;
     int ct=0;
 
+
     for(int i=0; i<m; i++){
-        for(int j=v[i].first; j<v[i].second; j++){
-            if(mp.find(j)!=mp.end()){
-                mp[j]=ct++;
+        for(int j=v[i].first; j<=v[i].second; j++){
+            if(mp.find(j)==mp.end()){
+                mp[ct]=j;
+                pos[j] = ct;
+                ct++;
             }
         }
     }
 
     vector<int> arr;
 
-    for(int i=0; i<n; i++){
+
+    /*
+    mp[0] = 5
+    mp[1] = 6
+    .....
+    
+
+    st = {2,3,5,6,7,8}
+    */
+
+    for(int i=0; i<=ct; i++){
         arr.pb(mp[i]);
     }
 
-    //check good and bad
+    /*
+    arr = [5,6,...]
+    */
 
-    int l=0; int r=n-1;
-    int lc=0;int rc=0;
-
-    vi bad_ones;
-    vi bad_zeroes;
-    while(l<=r){
-        if(s[arr[l]]==0){
-            while(r>l){
-                if(arr[r]==1){
-                    break;
-                }
-                r--;
-            }
-            if(r>l){
-                bad_ones.pb(arr[r]);
-                bad_zeroes.pb(arr[l]);
-                l++;
-                r--;
-            }
-            else{
-                break;
-            }
-        }
-        else l++;
+    int X = 0;
+    for(int i=0; i<=ct; i++){
+        X+=(s[arr[i]]=='1');
     }
 
-    //we have pairs whom we want to swap
-    int lcs = -1;
-    int rcs = -1;
-    if(bad_zeroes.size()!=0){
-        lcs = bad_zeroes[bad_zeroes.size()-1]+1;
-        rcs = bad_ones[bad_ones[0]]+1;
+    /*
+    X = 1s in arr from 0 -> ct
+    */
+
+    int Y=0;
+    for(int i=0; i<X; i++){
+        Y+=(s[arr[i]]=='0');
     }
 
-    int ans = bad_zeroes.size();
+    /*
+    Y = 0s in arr from 1 -> X
+    */
 
     while(q--){
         int x; cin>>x;
         x--;
-        int y = mp[x];
-        if(y>=lcs && y<=rcs){
-            if(s[y]==0){
-            }
-            else{
-            }
+
+        if(pos.find(x)==pos.end()){
+            cout<<"ans"<<Y<<endl;
+
+            //if we dont have this index in t(s),
+            //then fuck off
+            continue;
+        }
+        int y = pos[x];
+
+        // y will tell where the index is in arr
+
+
+        if(s[x]=='1'){
+
+            //1->0
+
+            if(X>=1 && s[pos[X-1]]=='0') Y--;
+            if(y<X-1) Y++;
+            X--;
+
+            s[x]='0';
+            cout<<"ans"<<Y<<endl;
         }
         else{
-            if(y<lcs){
-                if(s[y]=='0'){
+            //0->1
+            if(s[pos[X]]=='0') Y++;
+            if(y<=X) Y--;
 
-                }
-                else{
-
-                }
-            }
-            else{
-                if(s[y]=='0'){
-
-                }
-                else{
-
-                }
-            }
+            X++;
+            s[x]='1';
+            cout<<"ans"<<Y<<endl;
         }
     }
 }
